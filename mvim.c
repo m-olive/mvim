@@ -9,7 +9,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-/*** Data ***/
 struct editorConfig {
   int screenrows;
   int screencols;
@@ -20,16 +19,14 @@ struct editorConfig {
 
 struct editorConfig E;
 
-/*** Append buffer ***/
 struct abuf {
   char *b;
   int len;
 };
 
-/*** Defines ***/
+#define ABUF_INIT {NULL, 0}
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-/*** Prototypes ***/
 void abAppend(struct abuf *, const char *, int);
 void die(const char *);
 void disableRaw();
@@ -42,7 +39,6 @@ int getCursorPosition(int *, int *);
 int getWindowSize(int *, int *);
 void initEditor();
 
-/*** Init ***/
 void initEditor() {
   E.cx = 0;
   E.cy = 0;
@@ -62,7 +58,6 @@ int main() {
   return 0;
 }
 
-/*** Terminal ***/
 void die(const char *s) {
   write(STDOUT_FILENO, "\x1b[2J", 4);
   write(STDOUT_FILENO, "\x1b[H", 3);
@@ -144,10 +139,6 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
-/*** Append buffer ***/
-
-#define ABUF_INIT {NULL, 0}
-
 void abAppend(struct abuf *ab, const char *s, int len) {
   char *new = realloc(ab->b, ab->len + len);
 
@@ -160,7 +151,6 @@ void abAppend(struct abuf *ab, const char *s, int len) {
 
 void abFree(struct abuf *ab) { free(ab->b); }
 
-/*** Input ***/
 void editorProcessKeypress() {
   char c = editorReadKey();
 
@@ -173,7 +163,6 @@ void editorProcessKeypress() {
   }
 }
 
-/*** Output  ***/
 void editorDrawRows() {
   int y;
   for (y = 0; y < E.screenrows; y++) {
